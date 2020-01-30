@@ -1,13 +1,13 @@
 %% Variables
 nDims = 13;             % dimensionality of feature vectors
 nMixtures = 32;         % How many mixtures used to generate data
-nChannels = 99999999;   % Number of channels (sessions) per speaker    >10
+nChannels = 99999999;   % Number of channels (sessions) per speaker,need to be >10, will be changed later to accurate amount
 nWorkers = 1;           % Number of parfor workers, if available
 
 %% Load mfcc
 fileID = fopen('C:\Users\Vincent\Desktop\College\ORS\DS_10283_3336\LA\ASVspoof2019_LA_cm_protocols\ASVspoof2019.LA.cm.train.trn.txt');
 x = textscan(fileID, 'LA_00%u %s - - bonafide'); %format to read textfile for only bonafide audio no spoof
-fclose(fileID);
+fclose(fileID);                                  %spoof format:  'LA_00%u %s - %s %s'
 speakerLA_ID = x{1,1};                           %all speaker id in original order extract from txt file (78, 79, 80, ... 98)
 z = unique(speakerLA_ID);                        %array of unique speaker id sorted (1,2,3, .. 20)
 nSpeakers = length(z);                           %num speakers = num of distinct speaker id
