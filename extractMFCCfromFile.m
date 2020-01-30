@@ -2,7 +2,7 @@
 myFolder='C:\Users\Vincent\Desktop\College\ORS\DS_10283_3336\LA\ASVspoof2019_LA_eval\flac';
 filePattern = fullfile(myFolder, '*.flac'); % Change to whatever pattern you need.
 theFiles = dir(filePattern);
-for k = 68015 : length(theFiles)
+for k = 1 : length(theFiles)
   baseFileName = theFiles(k).name;
   fullFileName = fullfile(myFolder, baseFileName);
   fprintf(1, 'Now reading %s\n', baseFileName);
