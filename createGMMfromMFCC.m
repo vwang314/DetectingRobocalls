@@ -6,30 +6,30 @@ nWorkers = 1;           % Number of parfor workers, if available
 
 %% Load mfcc
 fileID = fopen('C:\Users\Vincent\Desktop\College\ORS\DS_10283_3336\LA\ASVspoof2019_LA_cm_protocols\ASVspoof2019.LA.cm.train.trn.txt');
-x = textscan(fileID, 'LA_00%u %s - - bonafide');
+x = textscan(fileID, 'LA_00%u %s - - bonafide'); %format to read textfile for only bonafide audio no spoof
 fclose(fileID);
-speakerLA_ID = x{1,1};
-z = unique(speakerLA_ID);
-nSpeakers = length(z);
-filename = x{1,2};
-count = ones(1,length(z));
-for i=1:length(z)
+speakerLA_ID = x{1,1};                           %all speaker id in original order extract from txt file (78, 79, 80, ... 98)
+z = unique(speakerLA_ID);                        %array of unique speaker id sorted (1,2,3, .. 20)
+nSpeakers = length(z);                           %num speakers = num of distinct speaker id
+filename = x{1,2};                               %all file name extract from txt file
+count = ones(1,length(z));                       %array used as counter
+for i=1:length(z)                                %loop to find the speaker with least audio files
     id = z(i);
     k = length(find(speakerLA_ID==id));
     a = [nChannels k];
     nChannels = min(a);
 end
-trainSpeakerData = cell(nSpeakers,nChannels);
-for a=1:length(filename)
-    [c,d] = find(z==speakerLA_ID(a));
-    f = matfile(char(filename(a)));
-    if (count(c)<nChannels+1)
-        trainSpeakerData{c, count(c)} = f.mm;
+trainSpeakerData = cell(nSpeakers,nChannels);   %initialize trainSpeakerData
+for a=1:length(filename)                        %loop to import mfcc for each file name in txt file
+    c = find(z==speakerLA_ID(a));               %get index corresponding to LA_00xx id (convert LA_00xx id to 1,2,3,.. id)
+    f = matfile(char(filename(a)));             %load mfcc .mat file
+    if (count(c)<nChannels+1)                   %make sure to import the same amount of files as speaker with least files
+        trainSpeakerData{c, count(c)} = f.mm;   %load mfcc into row corresponding to speaker
         count(c) = count(c)+1;
     end
 end
 
-speakerID=(1:nSpeakers)'*ones(1,nChannels);
+speakerID=(1:nSpeakers)'*ones(1,nChannels);     %matrix of same dimension as trainSpeakerData with each cell containing speakerID of the corresponding cell's mfcc
 testSpeakerData = trainSpeakerData;
 
 %% Step1: Create the universal background model from all the training speaker data
